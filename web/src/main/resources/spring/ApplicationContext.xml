@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- 开启注解 -->  
+	<mvc:annotation-driven />
+    <!-- 激活自动采用CGLIB代理功能 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<context:annotation-config />
+	
+	<!-- 获取ApplicationContext上下文 -->
+	<bean id="springContextHolder" class="com.wshsoft.framework.spring.SpringContextHolder" />
+	
+	<!-- 自动扫描除@Controller之外注解 -->
+	<context:component-scan base-package="com.wshsoft" use-default-filters="false">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- AOP切面配置 日志切入点 -->
+	<bean id="logAspect" class="com.wshsoft.framework.annotation.SysLogWithOutAnn" /><!--将日志类注入到bean中。 -->
+	<aop:config proxy-target-class="true">
+		<aop:aspect id="SysLogWithOutAnn" ref="logAspect"><!--调用日志类 -->
+			<aop:pointcut id="logCutService"
+				expression="execution(* com.podinns.controller..*(..))" /> <!--配置在controller包下所有的类在调用之前都会被拦截 -->
+			<aop:after-returning pointcut-ref="logCutService"
+				method="searchControllerCallCalls" returning="rtv" arg-names="rtv" />
+			<!-- <aop:after pointcut-ref="logCutService" method="adminOptionContent"/> -->
+
+			<!--<aop:before pointcut-ref="log" method="before"/> --><!--在controller包下面所有的类的所有方法被调用之前都调用logAspect中的before方法 -->
+			<!--<aop:after pointcut-ref="log" method="after"/> --><!--在controller包下面所有的类的所有方法被调用之前都调用logAspect中的after方法 -->
+		</aop:aspect>
+	</aop:config>
+	
+	<!-- 扫描切面包路径 
+	<bean id="logAspect" class="com.baomidou.framework.aop.LogAspect">
+		<property name="logPoint">
+			<bean class="com.baomidou.springwind.service.impl.SysLogServiceImpl" />
+		</property>
+	</bean>
+	<aop:config>
+		<aop:aspect ref="logAspect">
+			<aop:pointcut id="logPointCut" expression="@annotation(com.baomidou.framework.annotations.Log)" />
+			<aop:around pointcut-ref="logPointCut" method="saveLog" />
+		</aop:aspect>
+	</aop:config>
+    -->
+    <!-- 持久-->
+    <import resource="ApplicationContext-mybatis.xml"/>
+    <!-- 国际化 -->
+    <import resource="ApplicationContext-i18n.xml"/>
+    <!--事务-->
+    <import resource="ApplicationContext-tx.xml"/>
+</beans>

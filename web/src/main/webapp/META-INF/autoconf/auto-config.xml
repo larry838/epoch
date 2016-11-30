@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <group>
+        <property name="url" defaultValue="jdbc:mysql://127.0.0.1:3306/mango?useUnicode=true&amp;characterEncoding=utf8&amp;characterSetResults=utf8" description="数据库连接" />
+        <property name="driverClassName" defaultValue="com.mysql.jdbc.Driver" description="MySQL驱动" />
+        <property name="username" defaultValue="root" description="用户名" />
+        <property name="password" defaultValue="root" description="密码"/>
+    </group>
+    <script>
+        <generate template="db/dbconfig.properties"  destfile="/WEB-INF/classes/dbconfig.properties" charset="UTF-8"/>
+    </script>
+</config>

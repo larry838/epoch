@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wshsoft.mybatis.test.mysql.mapper.DrawMapper">
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		 draw_id, name, vinningvate, number, gmt_modified
+	</sql>
+
+	<resultMap type="Draw" id="DrawResultMap">
+		<id column="draw_id" property="draw_id" />
+		<result column="name" property="name" />
+		<result column="vinningvate" property="vinningvate" />
+		<result column="number" property="number" />
+	</resultMap>
+
+<select id="selectById" parameterType="Long" resultType="Draw">
+		select
+		draw_id,
+		name,
+		vinningvate,
+		number
+		from
+		prize
+		where
+		draw_id = #{id}
+</select>
+
+
+	<!-- 新增 -->
+	<insert id="save" parameterType="Pd">
+		insert into prize(
+		name,
+		vinningvate,
+		number
+		) values (
+		#{name},
+		#{vinningvate},
+		#{number}
+		)
+	</insert>
+
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="Pd">
+		delete from prize
+		where
+		draw_id = #{draw_id}
+	</delete>
+
+
+	<!-- 修改 -->
+	<update id="edit" parameterType="Pd">
+		update prize set
+		<if test="name != null and name != ''"> name = #{name}, </if>
+
+		<if test="vinningvate != null "> vinningvate = #{vinningvate}, </if>
+
+		<if test="number != null "> number = #{number}, </if>
+		gmt_modified=now() where draw_id = #{draw_id}
+	</update>
+	
+	<update id="editNumber" parameterType="Pd">
+	    update prize set
+		 number = #{number}, 
+		<if test="vinningvate != null"> vinningvate = #{vinningvate}, </if>
+		gmt_modified=now() where draw_id = #{draw_id}
+	</update>
+	<!-- 修改 -->
+	<update id="editDraw" parameterType="Draw">
+		update prize set
+		<if test="name != null and name != ''"> name = #{name}, </if>
+
+		<if test="vinningvate != null "> vinningvate = #{vinningvate}, </if>
+
+		<if test="number != null "> number = #{number}, </if>
+		gmt_modified=now() where draw_id = #{draw_id}
+	</update>
+
+	<select id="findRandId" parameterType="Pd" resultType="Integer">
+        select draw_id from prize where number >0 order by rand() limit 1
+    </select>
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="Pd" resultType="Pd">
+		select
+		draw_id,
+		name,
+		vinningvate,
+		number
+		from
+		prize
+		where
+		draw_id = #{draw_id}
+	</select>
+	<!-- 通过ID获取数据 -->
+	<select id="findDrawById" parameterType="Integer" resultType="Draw">
+		select
+		draw_id,
+		name,
+		vinningvate,
+		number
+		from
+		prize
+		where
+		draw_id = #{draw_id}
+	</select>
+
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="Pd">
+		select
+		draw_id,
+		name,
+		vinningvate,
+		number
+		from
+		prize
+	</select>
+
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="Pd" resultMap="DrawResultMap">
+		select
+		draw_id,
+		name,
+		vinningvate,
+		number
+		from
+		prize order by draw_id asc
+	</select>
+
+	<!-- 中奖率和 -->
+	<select id="sumChance" parameterType="Pd" resultType="Double">
+		select
+		sum(vinningvate)
+		from
+		prize
+	</select>
+	<!-- 记录数 -->
+	<select id="count" parameterType="Pd" resultType="Integer">
+		select
+		count(draw_id)
+		from
+		prize
+	</select>
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from prize
+		where
+		draw_id in
+		<foreach item="item" index="index" collection="array" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+</mapper>

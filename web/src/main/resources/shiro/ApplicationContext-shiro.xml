@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+     
+
+	<!-- ================ Shiro start ================ -->
+		<!-- 安全管理器 -->
+	    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+	        <property name="realms">
+	            <list>
+	                <ref bean="shiroRealm"/>
+	            </list>
+	        </property>
+	        <!-- cacheManager,集合spring缓存工厂 -->
+	        <property name="cacheManager" ref="shiroEhcacheManager" /> 
+	        <property name="sessionManager" ref="sessionManager" /> 
+	    </bean>
+
+		<!-- 項目自定义的Realm -->
+	    <bean id="shiroRealm" class="com.podinns.interceptor.shiro.ShiroRealm" ></bean>
+
+		<!-- Shiro Filter -->
+		<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+			<property name="securityManager" ref="securityManager" />
+			<property name="loginUrl" value="/" />
+			<property name="successUrl" value="/main/index" />
+			<property name="unauthorizedUrl" value="/login_toLogin" />
+			<property name="filterChainDefinitions">
+				<value>
+				/static/**= anon
+				/static/login/**= anon
+				/static/js/**= anon
+				/static/css/**= anon
+	           	/login_login= anon
+	           	/app**/**= anon
+	           	/plugins/**= anon
+	           	/code.do= anon
+	           	/switch.jsp= anon
+	           	/**= authc
+				</value>
+			</property>
+		</bean>
+	<!-- ================ Shiro end ================ -->
+	<!-- 用户授权信息Cache -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />
+	
+
+ <!-- 缓存管理器 使用Ehcache实现 -->
+    <bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:shiro/ehcache-shiro.xml"/>
+    </bean>
+
+    <!-- 会话DAO -->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.MemorySessionDAO"/>
+
+    <!-- 会话管理器 -->
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="sessionDAO" ref="sessionDAO"/>
+    </bean>
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+</beans>

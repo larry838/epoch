@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	       
+   <!-- 自动扫描且只扫描@Controller -->
+	<context:component-scan base-package="com.wshsoft" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/plain;charset=UTF-8</value>
+			    <value>text/html;charset=UTF-8</value>
+                <value>text/json;charset=UTF-8</value>
+                <value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	<mvc:annotation-driven>
+		<!-- 编码转换 -->
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/plain;charset=UTF-8</value>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven> 
+	<!-- 支持返回json -->
+	<!-- 配置viewResolver -->
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+    <!-- jspViewResolver -->
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/views/jsp/" />
+	</bean>
+	<import resource="freemarker-resolver.xml"/><!--freemarker-->
+	<import resource="velocity-resolver.xml"/><!-- velocity -->
+	<bean id="viewResolver" class="com.wshsoft.framework.mvc.MultipleViewResolver">
+		<property name="defaultViewResolver" ref="beanNameViewResolver" />
+		<property name="viewResolverMap">
+			<map>
+				<entry>
+					<key>
+						<set>
+							<value>.jsp</value>
+						</set>
+					</key>
+					<ref bean="jspViewResolver" />
+				</entry>
+				<entry>
+					<key>
+						<set>
+							<value>.vm</value>
+							<value>.htm</value>
+						</set>
+					</key>
+					<ref bean="velocityViewResolver" />
+				</entry>
+				<entry>
+					<key>
+						<value>.ftl</value>
+					</key>
+					<ref bean="freeMarkerViewResolver" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+    <!-- 使用 Swagger Restful API文档时，添加此注解 -->
+	<mvc:default-servlet-handler />
+	<!-- 状态控制器标签 -->
+	<mvc:status-controller path="/status" status-code="200" />
+	
+	<!-- 带状态的视图控制器标签 -->
+	<mvc:view-controller path="/error/**" status-code="200" />
+
+	<!-- 配置静态资源，直接映射到对应的文件夹，DispatcherServlet 不处理 -->
+	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
+	
+	<!-- 网站图标，注意 ！favicon.ico 放在 webapp 目录 -->
+	<mvc:resources mapping="/favicon.ico" location="/favicon.ico" />
+	
+	<!-- 总错误处理
+	这里主要的类是SimpleMappingExceptionResolver类，和他的父类AbstractHandlerExceptionResolver类。
+	具体可以配置哪些属性，我是通过查看源码知道的。
+	你也可以实现HandlerExceptionResolver接口，写一个自己的异常处理程序。
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView">
+		 	<value>/error/error</value> error页面可以通过Exception e = (Exception)request.getAttribute("exception")获得异常信息
+		</property>
+		<property name="defaultStatusCode">
+		 	<value>500</value>
+		</property>
+		<property name="warnLogCategory">
+		 	<value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver</value>
+		</property>
+	</bean>
+	-->
+	
+   <bean id="exceptionResolver" class="com.wshsoft.framework.exception.MyExceptionResolver"></bean>	
+   
+ 
+
+	<!-- 对静态资源文件的访问 
+	/images/**映射到ResourceHttpRequestHandler进行处理，
+	location指定静态资源的位置.可以是web application根目录下、jar包里面，这样可以把静态资源压缩到jar包中。
+	cache-period 可以使得静态资源进行web cache 
+	<mvc:resources mapping="/images/**" location="/images/" cache-period="31556926"/>-->
+	<mvc:resources mapping="/admin/**" location="/,/admin/" />
+	<mvc:resources mapping="/static/**" location="/,/static/" />
+	<mvc:resources mapping="/plugins/**" location="/,/plugins/" />
+	<mvc:resources mapping="/uploadFiles/**" location="/,/uploadFiles/" />
+	<!-- 上传拦截，如最大上传值及最小上传值 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">
+			<value>104857600</value>
+		</property>
+		<property name="maxInMemorySize">
+			<value>4096</value>
+		</property>
+		<property name="defaultEncoding">
+			<value>utf-8</value>
+		</property>
+	</bean>
+</beans>

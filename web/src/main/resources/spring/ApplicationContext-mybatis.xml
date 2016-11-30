@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+        
+    <!-- druid配置 -->    
+    <import resource="ApplicationContext-druid.xml"/>    
+ 	<!-- MyBatis SqlSessionFactoryBean 配置 -->
+    <bean id="sqlSessionFactory" class="com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean">
+   		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
+		<property name="typeAliasesPackage" value="com.wshsoft.mybatis.test.mysql.entity.vo" />
+		<property name="mapperLocations" value="classpath:mysql/*Mapper.xml" />
+        <property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <bean id="paginationInterceptor" class="com.wshsoft.mybatis.plugins.pagination.PaginationInterceptor">
+			         <property name="dialectType" value="mysql" />
+			    </bean>
+			    <bean class="com.wshsoft.mybatis.plugins.sql.SQLPrintPlugin"/> 
+			    <bean class="com.wshsoft.mybatis.plugins.IndexingPlugin">
+			         <property name="dbtype" value="mysql" />
+			    </bean>
+            </array>
+        </property>
+    </bean>
+    
+    <!-- 加载 mapper接口配置 -->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.wshsoft.mybatis.test.mysql.mapper" />
+	</bean>
+	<!-- mapper.xml文件动态加载
+	<bean class="com.wshsoft.mybatis.plugins.XMLMapperLoader" />-->
+</beans>
