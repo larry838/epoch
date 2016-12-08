@@ -3,9 +3,6 @@ package com.wshsoft.framework.common.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 /**
  * <p>
  * MAC地址工具
@@ -14,12 +11,8 @@ import java.util.logging.Logger;
  * @author xiejian
  * @version 2016-04-16
  */
-public class MacUtil {
+public class MacUtil extends EnvUtil {
 	
-	private static final Logger logger = Logger.getLogger("EnvUtil");
-
-	private static Boolean OS_LINUX = null;
-
 	/**
 	 * 获取当前操作系统名称. return 操作系统名称 例如:windows,Linux,Unix等.
 	 */
@@ -203,54 +196,5 @@ public class MacUtil {
 		}
 		return mac == null ? "" : mac;
 	}
-
-	/**
-	 * 判断当前系统是否为 linux
-	 * 
-	 * @return true linux, false windows
-	 */
-	public static boolean isLinux() {
-		if (OS_LINUX == null) {
-			String OS = System.getProperty("os.name").toLowerCase();
-			logger.info("os.name: " + OS);
-			if (OS != null && OS.contains("windows")) {
-				OS_LINUX = false;
-			} else {
-				OS_LINUX = true;
-			}
-		}
-		return OS_LINUX;
-	}
-
-	/**
-	 * 返回当前系统变量的函数 结果放至 Properties
-	 */
-	public static Properties getEnv() {
-		Properties prop = new Properties();
-		try {
-			Process p = null;
-			if (isLinux()) {
-				p = Runtime.getRuntime().exec("sh -c set");
-			} else {
-				// windows
-				p = Runtime.getRuntime().exec("cmd /c set");
-			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line;
-			while ((line = br.readLine()) != null) {
-				int i = line.indexOf("=");
-				if (i > -1) {
-					String key = line.substring(0, i);
-					String value = line.substring(i + 1);
-					prop.setProperty(key, value);
-				}
-			}
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return prop;
-	}
-
 
 }

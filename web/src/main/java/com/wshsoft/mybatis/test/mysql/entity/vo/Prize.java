@@ -3,7 +3,7 @@ package com.wshsoft.mybatis.test.mysql.entity.vo;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.wshsoft.mybatis.annotations.constant.IdType;
+import com.wshsoft.mybatis.annotations.IdType;
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;

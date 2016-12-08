@@ -20,12 +20,16 @@
         <property name="plugins">
             <array>
                 <!-- 分页插件配置 -->
-                <bean id="paginationInterceptor" class="com.wshsoft.mybatis.plugins.pagination.PaginationInterceptor">
+                <bean id="paginationInterceptor" class="com.wshsoft.mybatis.plugins.PaginationInterceptor">
 			         <property name="dialectType" value="mysql" />
 			    </bean>
-			    <bean class="com.wshsoft.mybatis.plugins.sql.SQLPrintPlugin"/> 
-			    <bean class="com.wshsoft.mybatis.plugins.IndexingPlugin">
-			         <property name="dbtype" value="mysql" />
+			    <!-- SQL 执行性能分析，开发环境使用，线上不推荐。 maxTime 指的是 sql 最大执行时长 -->
+			    <bean class="com.wshsoft.mybatis.plugins.PerformanceInterceptor">
+                     <property name="maxTime" value="1000" />
+                </bean>
+			    <!-- SQL 执行性能分析拦截器 stopProceed 发现全表执行 delete update 是否停止运行 -->
+			    <bean class="com.wshsoft.mybatis.plugins.SqlExplainInterceptor">
+			        <property name="stopProceed" value="false" />  
 			    </bean>
             </array>
         </property>

@@ -1,10 +1,8 @@
 package com.wshsoft.mybatis.test.mysql.mapper;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.session.RowBounds;
 
-import com.wshsoft.mybatis.mapper.AutoMapper;
+import com.wshsoft.mybatis.mapper.BaseMapper;
 import com.wshsoft.mybatis.test.mysql.entity.vo.Draw;
 import com.wshsoft.mybatis.test.mysql.pd.Page;
 
@@ -18,7 +16,7 @@ import com.wshsoft.mybatis.test.mysql.pd.Page;
  * @author xiejian
  * @Date 2016-01-23
  */
-public interface DrawMapper extends AutoMapper<Draw> {
+public interface DrawMapper extends BaseMapper<Draw> {
 	
 	public List datalistPage( Page page);
 

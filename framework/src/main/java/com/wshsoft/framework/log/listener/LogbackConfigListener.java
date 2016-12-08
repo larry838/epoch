@@ -17,6 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
+import com.wshsoft.framework.RunEnvironment;
+import com.wshsoft.framework.common.FrameworkConstants;
+import com.wshsoft.framework.exception.FrameWorkException;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 
@@ -29,7 +33,7 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
  */
 public class LogbackConfigListener implements ServletContextListener {
 
-	private String charset = SwConstants.UTF_8;
+	private String charset = FrameworkConstants.UTF_8;
 
 	private RunEnvironment runEnvironment;
 
@@ -58,7 +62,7 @@ public class LogbackConfigListener implements ServletContextListener {
 			Velocity.evaluate(new VelocityContext(context), writer, "LogbackConfigListener", br);
 			this.initLogging(new ByteArrayInputStream(writer.toString().getBytes(getCharset())));
 		} catch ( Exception e ) {
-			throw new SpringWindException(e);
+			throw new FrameWorkException(e);
 		}
 	}
 
@@ -72,7 +76,7 @@ public class LogbackConfigListener implements ServletContextListener {
 		try {
 			configurator.doConfigure(in);
 		} catch ( Exception e ) {
-			throw new SpringWindException(e);
+			throw new FrameWorkException(e);
 		}
 		lc.start();
 	}

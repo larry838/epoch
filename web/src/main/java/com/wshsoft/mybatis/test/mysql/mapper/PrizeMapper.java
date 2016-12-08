@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
 
-import com.wshsoft.mybatis.mapper.AutoMapper;
+import com.wshsoft.mybatis.mapper.BaseMapper;
 import com.wshsoft.mybatis.test.mysql.entity.vo.Prize;
 
 /**
@@ -12,7 +12,7 @@ import com.wshsoft.mybatis.test.mysql.entity.vo.Prize;
  * Prize 表数据库控制层接口
  *
  */
-public interface PrizeMapper extends AutoMapper<Prize> {
+public interface PrizeMapper extends BaseMapper<Prize> {
 	
 	/**
 	 * 用户列表，分页显示
