@@ -40,18 +40,18 @@ public class RestApiConfig extends WebMvcConfigurationSupport{
 	                "Cust Domain's REST API, for system administrator",//小标题
 	                "1.0",//版本
 	                "NO terms of service",
-	                 "329458839@qq.com",//作者
-	                "cust共享",//链接显示文字
-	                "https://github.com/zhbxzc/cust"//网站链接
+	                 "larry838@qq.com",//作者
+	                "wshsoft",//链接显示文字
+	                "http://wshsoft.com"//网站链接
 	        );
 			return apiInfo;
 	  }
 	        		 
 	     private ApiInfo apiInfo() {  
 	         return new ApiInfoBuilder()  
-	              .title("Spring 中使用Swagger2构建RESTful APIs") 
+	              .title("Spring使用Swagger2构建RESTful APIs") 
 	              .description("更多Spring Boot相关文章请关注:")
-	                .termsOfServiceUrl("http://blog.csdn.net/he90227")  
+	                .termsOfServiceUrl("http://blog.csdn.net")  
 	                .contact("xiejian")  
 	                  .version("1.1")  
 	                  .build();  
